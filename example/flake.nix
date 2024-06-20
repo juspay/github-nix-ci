@@ -8,6 +8,10 @@
       system = "x86_64-linux";
       modules = [
         {
+          boot.loader = {
+            systemd-boot.enable = true;
+            efi.canTouchEfiVariables = true;
+          };
           system.stateVersion = "24.05";
         }
       ];
