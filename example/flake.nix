@@ -8,6 +8,7 @@
       system = "x86_64-linux";
       modules = [
         {
+          fileSystems."/" = { device = "/dev/sda"; fsType = "ext"; };
           boot.loader = {
             systemd-boot.enable = true;
             efi.canTouchEfiVariables = true;
