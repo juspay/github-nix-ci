@@ -92,22 +92,25 @@ let
     );
 in
 {
-  # Each org gets its own set of runners. There will be at max `num` parallels
-  # CI builds for this org / host combination.
-  services.github-runners = lib.mkMerge [
-    # Example: org runners
-    # (mkOrgRunners { orgName = "juspay"; num = 10; })
-    # Example: personal runners
-    # (mkPersonalRunners { user = "srid"; repo = "emanote"; })
-  ];
+  options = { };
+  config = {
+    # Each org gets its own set of runners. There will be at max `num` parallels
+    # CI builds for this org / host combination.
+    services.github-runners = lib.mkMerge [
+      # Example: org runners
+      # (mkOrgRunners { orgName = "juspay"; num = 10; })
+      # Example: personal runners
+      # (mkPersonalRunners { user = "srid"; repo = "emanote"; })
+    ];
 
-  # User (Linux only)
-  users.users.${user} = lib.mkIf isLinux {
-    inherit group;
-    isSystemUser = true;
+    # User (Linux only)
+    users.users.${user} = lib.mkIf isLinux {
+      inherit group;
+      isSystemUser = true;
+    };
+    users.groups.${group} = lib.mkIf isLinux { };
+    nix.settings.trusted-users = [
+      (if isLinux then user else "_github-runner")
+    ];
   };
-  users.groups.${group} = lib.mkIf isLinux { };
-  nix.settings.trusted-users = [
-    (if isLinux then user else "_github-runner")
-  ];
 }
