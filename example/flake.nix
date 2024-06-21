@@ -2,11 +2,13 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     nix-darwin.url = "github:LnL7/nix-darwin";
+    ragenix.url = "github:yaxitech/ragenix";
     github-ci-nix = { };
   };
   outputs = inputs: {
     nixosConfigurations.example = inputs.nixpkgs.lib.nixosSystem {
       modules = [
+        inputs.ragenix.nixosModules.default
         inputs.github-ci-nix.nixosModules.default
         {
           nixpkgs.hostPlatform = "x86_64-linux";
@@ -22,6 +24,7 @@
 
     darwinConfigurations.example = inputs.nix-darwin.lib.darwinSystem {
       modules = [
+        inputs.ragenix.darwinModules.default
         inputs.github-ci-nix.darwinModules.default
         {
           nixpkgs.hostPlatform = "aarch64-darwin";
