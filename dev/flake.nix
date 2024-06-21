@@ -4,6 +4,7 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-root.url = "github:srid/flake-root";
     treefmt-nix.url = "github:numtide/treefmt-nix";
+    github-ci-nix = { };
   };
   outputs = inputs@{ self, nixpkgs, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
@@ -14,6 +15,7 @@
       ];
       perSystem = { pkgs, lib, config, ... }: {
         treefmt.config = {
+          projectRoot = inputs.github-ci-nix;
           projectRootFile = "README.md";
           programs.nixpkgs-fmt.enable = true;
         };
