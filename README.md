@@ -1,4 +1,4 @@
-# github-ci-nix
+# github-nix-ci
 
 WIP: A simple NixOS &amp; nix-darwin module for managing self-hosted GitHub runners
 

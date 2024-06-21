@@ -4,7 +4,7 @@
     darwinModules.default = ./nix/module.nix;
     nixci.default =
       let
-        overrideInputs.github-ci-nix = ./.;
+        overrideInputs.github-nix-ci = ./.;
       in
       {
         example = {

@@ -72,7 +72,7 @@ let
 in
 {
   options = {
-    github-ci-nix = lib.mkOption {
+    github-nix-ci = lib.mkOption {
       type = types.submodule {
         options = {
           orgRunners = lib.mkOption {
@@ -142,11 +142,11 @@ in
     # Each org gets its own set of runners. There will be at max `num` parallels
     # CI builds for this org / host combination.
     services.github-runners = lib.listToAttrs
-      (forAttr config.github-ci-nix.orgRunners
+      (forAttr config.github-nix-ci.orgRunners
         (name: cfg:
           lib.nameValuePair cfg.output.name cfg.output.runner)
       ++
-      forAttr config.github-ci-nix.personalRunners (name: cfg:
+      forAttr config.github-nix-ci.personalRunners (name: cfg:
         lib.nameValuePair cfg.output.name cfg.output.runner)
       );
 
