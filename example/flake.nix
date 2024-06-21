@@ -28,6 +28,10 @@
         inputs.github-ci-nix.darwinModules.default
         {
           nixpkgs.hostPlatform = "aarch64-darwin";
+          # TODO: Add this, and add fake ssh keys for agenix to work during nix build.
+          #github-ci-nix = {
+          #  orgRunners.juspay.num = 2;
+          #};
           services.nix-daemon.enable = true;
         }
       ];

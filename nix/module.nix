@@ -1,7 +1,8 @@
-{ pkgs, lib, config, ... }:
+top@{ pkgs, lib, config, ... }:
 
 let
   inherit (pkgs.stdenv) isLinux;
+  inherit (lib) types;
 
   host = builtins.toString config.networking.hostName;
   # The list of systems that this host can build for.
@@ -16,6 +17,7 @@ let
     in
     lib.unique ([ host-system ] ++ extra-systems);
   for = lib.flip builtins.map;
+  forAttr = lib.flip lib.mapAttrsToList;
   # For input n, return [1..n]
   range =
     lib.genList (i: i + 1);
@@ -67,41 +69,86 @@ let
   user = "github-runner";
   group = "github-runner";
 
-  # Create 'num' runners for the given GitHub org
-  mkOrgRunners = { orgName, num }:
-    lib.listToAttrs (for (range num)
-      (n: {
-        name = "${host}-${orgName}-${paddedNum n}";
-        value = common // {
-          tokenFile = config.age.secrets."github-runner-tokens/${orgName}".path;
-          url = "https://github.com/${orgName}";
-        };
-      })
-    );
-
-  # Like mkOrgRunner but for personal repos
-  mkPersonalRunners = { user, repo, num ? 1 }:
-    lib.listToAttrs (for (range num)
-      (n: {
-        name = "${host}-${user}-${repo}-${paddedNum n}";
-        value = common // {
-          tokenFile = config.age.secrets."github-runner-tokens/${user}".path;
-          url = "https://github.com/${user}/${repo}";
-        };
-      })
-    );
 in
 {
-  options = { };
+  options = {
+    github-ci-nix = lib.mkOption {
+      type = types.submodule {
+        options = {
+          orgRunners = lib.mkOption {
+            type = types.attrsOf (types.submodule ({ config, name, ... }: {
+              options = {
+                num = lib.mkOption {
+                  type = types.int;
+                };
+
+                output.name = lib.mkOption {
+                  type = types.str;
+                  default = "${host}-${name}-${paddedNum config.num}";
+                };
+                output.runner = lib.mkOption {
+                  type = types.raw;
+                  default = common // {
+                    tokenFile = top.config.age.secrets."github-runner-tokens/${name}".path;
+                    url = "https://github.com/${name}";
+                  };
+                };
+              };
+            }));
+            default = { };
+          };
+
+          personalRunners = lib.mkOption {
+            type = types.attrsOf (types.submodule ({ config, name, ... }: {
+              options = {
+                num = lib.mkOption {
+                  type = types.int;
+                };
+
+                output.user = lib.mkOption {
+                  type = types.str;
+                  default =
+                    let parts = lib.splitString "/" name;
+                    in if lib.length parts == 2 then builtins.elemAt parts 0 else builtins.abort "Invalid user/repo";
+                };
+                output.repo = lib.mkOption {
+                  type = types.str;
+                  default =
+                    let parts = lib.splitString "/" name;
+                    in if lib.length parts == 2 then builtins.elemAt parts 1 else builtins.abort "Invalid user/repo";
+                };
+
+                output.name = lib.mkOption {
+                  type = types.str;
+                  default = "${host}-${config.output.user}-${config.output.repo}-${paddedNum config.num}";
+                };
+                output.runner = lib.mkOption {
+                  type = types.raw;
+                  default = common // {
+                    tokenFile = top.config.age.secrets."github-runner-tokens/${config.output.user}".path;
+                    url = "https://github.com/${config.output.user}";
+                  };
+                };
+              };
+            }));
+            default = { };
+          };
+        };
+      };
+      default = { };
+    };
+  };
   config = {
     # Each org gets its own set of runners. There will be at max `num` parallels
     # CI builds for this org / host combination.
-    services.github-runners = lib.mkMerge [
-      # Example: org runners
-      # (mkOrgRunners { orgName = "juspay"; num = 10; })
-      # Example: personal runners
-      # (mkPersonalRunners { user = "srid"; repo = "emanote"; })
-    ];
+    services.github-runners = lib.listToAttrs
+      (forAttr config.github-ci-nix.orgRunners
+        (name: cfg:
+          lib.nameValuePair cfg.output.name cfg.output.runner)
+      ++
+      forAttr config.github-ci-nix.personalRunners (name: cfg:
+        lib.nameValuePair cfg.output.name cfg.output.runner)
+      );
 
     # User (Linux only)
     users.users.${user} = lib.mkIf isLinux {
