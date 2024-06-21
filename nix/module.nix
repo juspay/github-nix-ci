@@ -89,7 +89,7 @@ in
                 output.runner = lib.mkOption {
                   type = types.raw;
                   default = common // {
-                    tokenFile = top.config.age.secrets."github-nix-ci/${name}.token".path;
+                    tokenFile = top.config.age.secrets."github-nix-ci/${name}.token.age".path;
                     url = "https://github.com/${name}";
                   };
                 };
@@ -125,7 +125,7 @@ in
                 output.runner = lib.mkOption {
                   type = types.raw;
                   default = common // {
-                    tokenFile = top.config.age.secrets."github-nix-ci/${config.output.user}.token".path;
+                    tokenFile = top.config.age.secrets."github-nix-ci/${config.output.user}.token.age".path;
                     url = "https://github.com/${config.output.user}";
                   };
                 };
