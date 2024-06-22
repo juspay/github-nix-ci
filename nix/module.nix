@@ -161,7 +161,7 @@ in
                   type = types.str;
                   default = "${host}-${config.output.user}-${config.output.repo}-${paddedNum config.num}";
                 };
-                output.runner = lib.mkOption {
+                output.runners = lib.mkOption {
                   type = types.raw;
                   default = common // {
                     inherit (config) tokenFile url;
