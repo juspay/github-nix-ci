@@ -10,7 +10,7 @@
       services.github-nix-ci = {
         age.secretsDir = ./secrets;
         personalRunners = {
-          "srid/nixos-config".num = 1;
+          "srid/emanote".num = 1;
           "srid/haskell-flake".num = 3;
         };
         orgRunners = {
