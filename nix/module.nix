@@ -85,6 +85,19 @@ in
                   type = types.int;
                 };
 
+                tokenFile = lib.mkOption {
+                  type = types.path;
+                  description = "The path to the token file for this runner";
+                  default = top.config.age.secrets."github-nix-ci/${name}.token.age".path;
+                  defaultText = "The agenix secret file at the conventional path";
+                };
+
+                url = lib.mkOption {
+                  type = types.str;
+                  default = "https://github.com/${name}";
+                  readOnly = true;
+                };
+
                 output.name = lib.mkOption {
                   type = types.str;
                   default = "${host}-${name}-${paddedNum config.num}";
@@ -92,8 +105,7 @@ in
                 output.runner = lib.mkOption {
                   type = types.raw;
                   default = common // {
-                    tokenFile = top.config.age.secrets."github-nix-ci/${name}.token.age".path;
-                    url = "https://github.com/${name}";
+                    inherit (config) tokenFile url;
                   };
                 };
               };
@@ -106,6 +118,19 @@ in
               options = {
                 num = lib.mkOption {
                   type = types.int;
+                };
+
+                tokenFile = lib.mkOption {
+                  type = types.path;
+                  description = "The path to the token file for this runner";
+                  default = top.config.age.secrets."github-nix-ci/${config.output.user}.token.age".path;
+                  defaultText = "The agenix secret file at the conventional path";
+                };
+
+                url = lib.mkOption {
+                  type = types.str;
+                  default = "https://github.com/${config.output.user}/${config.output.repo}";
+                  readOnly = true;
                 };
 
                 output.user = lib.mkOption {
@@ -128,8 +153,7 @@ in
                 output.runner = lib.mkOption {
                   type = types.raw;
                   default = common // {
-                    tokenFile = top.config.age.secrets."github-nix-ci/${config.output.user}.token.age".path;
-                    url = "https://github.com/${config.output.user}/${config.output.repo}";
+                    inherit (config) tokenFile url;
                   };
                 };
               };
