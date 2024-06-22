@@ -1,7 +1,7 @@
 top@{ pkgs, lib, config, ... }:
 
 let
-  inherit (pkgs.stdenv) isLinux;
+  inherit (pkgs.stdenv) isLinux isDarwin;
   inherit (lib) types;
   inherit (config.networking) hostName;
 
@@ -135,6 +135,12 @@ in
               };
             }));
             default = { };
+          };
+
+          output.runner.owner = lib.mkOption {
+            type = types.str;
+            default = if isDarwin then "_github-runner" else "github-runner";
+            description = "The owner of the runner process";
           };
         };
       };
