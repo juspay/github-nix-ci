@@ -4,6 +4,7 @@ let
   inherit (pkgs.stdenv) isLinux;
   inherit (lib) types;
 
+  # TODO: fail if not set
   host = builtins.toString config.networking.hostName;
   # The list of systems that this host can build for.
   # cf. https://stackoverflow.com/q/78649070/55246
@@ -126,7 +127,7 @@ in
                   type = types.raw;
                   default = common // {
                     tokenFile = top.config.age.secrets."github-nix-ci/${config.output.user}.token.age".path;
-                    url = "https://github.com/${config.output.user}";
+                    url = "https://github.com/${config.output.user}/${config.output.repo}";
                   };
                 };
               };
