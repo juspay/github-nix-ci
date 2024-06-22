@@ -109,15 +109,15 @@ in
                   readOnly = true;
                 };
 
-                output.name = lib.mkOption {
-                  type = types.str;
-                  default = "${host}-${name}-${paddedNum config.num}";
-                };
-                output.runner = lib.mkOption {
+                output.runners = lib.mkOption {
                   type = types.raw;
-                  default = common // {
-                    inherit (config) tokenFile url;
-                  };
+                  default =
+                    lib.listToAttrs (for (range config.num) (i:
+                      lib.nameValuePair "${host}-${name}-${paddedNum i}"
+                        (common // {
+                          inherit (config) tokenFile url;
+                        })
+                    ));
                 };
               };
             }));
@@ -156,16 +156,16 @@ in
                     let parts = lib.splitString "/" name;
                     in if lib.length parts == 2 then builtins.elemAt parts 1 else builtins.abort "Invalid user/repo";
                 };
-
-                output.name = lib.mkOption {
-                  type = types.str;
-                  default = "${host}-${config.output.user}-${config.output.repo}-${paddedNum config.num}";
-                };
-                output.runner = lib.mkOption {
+                output.runners = lib.mkOption {
                   type = types.raw;
-                  default = common // {
-                    inherit (config) tokenFile url;
-                  };
+                  default =
+                    lib.listToAttrs
+                      (for (range config.num) (i:
+                        lib.nameValuePair "${host}-${config.output.user}-${config.output.repo}-${paddedNum i}"
+                          (common // {
+                            inherit (config) tokenFile url;
+                          })
+                      ));
                 };
               };
             }));
@@ -185,14 +185,13 @@ in
   config = {
     # Each org gets its own set of runners. There will be at max `num` parallels
     # CI builds for this org / host combination.
-    services.github-runners = lib.listToAttrs
-      (forAttr config.services.github-nix-ci.orgRunners
-        (name: cfg:
-          lib.nameValuePair cfg.output.name cfg.output.runner)
-      ++
-      forAttr config.services.github-nix-ci.personalRunners (name: cfg:
-        lib.nameValuePair cfg.output.name cfg.output.runner)
-      );
+    services.github-runners =
+      let
+        runners =
+          forAttr config.services.github-nix-ci.personalRunners (_: cfg: cfg.output.runners)
+          ++ forAttr config.services.github-nix-ci.orgRunners (_: cfg: cfg.output.runners);
+      in
+      builtins.foldl' (a: b: lib.mkMerge [ a b ]) { } runners;
 
     age.secrets =
       let
