@@ -4,6 +4,7 @@ let
   inherit (pkgs.stdenv) isLinux;
   inherit (lib) types;
 
+  # TODO: fail if not set
   host = builtins.toString config.networking.hostName;
   # The list of systems that this host can build for.
   # cf. https://stackoverflow.com/q/78649070/55246
@@ -72,7 +73,7 @@ let
 in
 {
   options = {
-    github-nix-ci = lib.mkOption {
+    services.github-nix-ci = lib.mkOption {
       type = types.submodule {
         options = {
           orgRunners = lib.mkOption {
@@ -89,7 +90,7 @@ in
                 output.runner = lib.mkOption {
                   type = types.raw;
                   default = common // {
-                    tokenFile = top.config.age.secrets."github-runner-tokens/${name}".path;
+                    tokenFile = top.config.age.secrets."github-nix-ci/${name}.token.age".path;
                     url = "https://github.com/${name}";
                   };
                 };
@@ -125,8 +126,8 @@ in
                 output.runner = lib.mkOption {
                   type = types.raw;
                   default = common // {
-                    tokenFile = top.config.age.secrets."github-runner-tokens/${config.output.user}".path;
-                    url = "https://github.com/${config.output.user}";
+                    tokenFile = top.config.age.secrets."github-nix-ci/${config.output.user}.token.age".path;
+                    url = "https://github.com/${config.output.user}/${config.output.repo}";
                   };
                 };
               };
@@ -142,11 +143,11 @@ in
     # Each org gets its own set of runners. There will be at max `num` parallels
     # CI builds for this org / host combination.
     services.github-runners = lib.listToAttrs
-      (forAttr config.github-nix-ci.orgRunners
+      (forAttr config.services.github-nix-ci.orgRunners
         (name: cfg:
           lib.nameValuePair cfg.output.name cfg.output.runner)
       ++
-      forAttr config.github-nix-ci.personalRunners (name: cfg:
+      forAttr config.services.github-nix-ci.personalRunners (name: cfg:
         lib.nameValuePair cfg.output.name cfg.output.runner)
       );
 
