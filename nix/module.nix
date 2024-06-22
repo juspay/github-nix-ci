@@ -161,7 +161,7 @@ in
                   default =
                     lib.listToAttrs
                       (for (range config.num) (i:
-                        lib.nameValuePair "${host}-${config.output.user}-${config.output.repo}-${paddedNum config.num}"
+                        lib.nameValuePair "${host}-${config.output.user}-${config.output.repo}-${paddedNum i}"
                           (common // {
                             inherit (config) tokenFile url;
                           })
@@ -192,7 +192,6 @@ in
           ++ forAttr config.services.github-nix-ci.orgRunners (_: cfg: cfg.output.runners);
       in
       builtins.foldl' (a: b: lib.mkMerge [ a b ]) { } runners;
-
 
     age.secrets =
       let
