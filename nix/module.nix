@@ -112,12 +112,12 @@ in
                 output.runners = lib.mkOption {
                   type = types.raw;
                   default =
-                    lib.listToAttrs (for (range config.num) (i: {
-                      name = "${host}-${name}-${paddedNum i}";
-                      value = common // {
-                        inherit (config) tokenFile url;
-                      };
-                    }));
+                    lib.listToAttrs (for (range config.num) (i:
+                      lib.nameValuePair "${host}-${name}-${paddedNum i}"
+                        (common // {
+                          inherit (config) tokenFile url;
+                        })
+                    ));
                 };
               };
             }));
@@ -159,12 +159,13 @@ in
                 output.runners = lib.mkOption {
                   type = types.raw;
                   default =
-                    lib.listToAttrs (for (range config.num) (i: {
-                      name = "${host}-${config.output.user}-${config.output.repo}-${paddedNum config.num}";
-                      value = common // {
-                        inherit (config) tokenFile url;
-                      };
-                    }));
+                    lib.listToAttrs
+                      (for (range config.num) (i:
+                        lib.nameValuePair "${host}-${config.output.user}-${config.output.repo}-${paddedNum config.num}"
+                          (common // {
+                            inherit (config) tokenFile url;
+                          })
+                      ));
                 };
               };
             }));
@@ -184,13 +185,14 @@ in
   config = {
     # Each org gets its own set of runners. There will be at max `num` parallels
     # CI builds for this org / host combination.
-    services.github-runners = lib.listToAttrs (lib.flatten
-      ((for (lib.attrValues config.services.github-nix-ci.orgRunners)
-        (cfg: cfg.output.runners))
-      ++
-      (for (lib.attrValues config.services.github-nix-ci.personalRunners)
-        (cfg: cfg.output.runners))
-      ));
+    services.github-runners =
+      let
+        runners =
+          forAttr config.services.github-nix-ci.personalRunners (_: cfg: cfg.output.runners)
+          ++ forAttr config.services.github-nix-ci.orgRunners (_: cfg: cfg.output.runners);
+      in
+      builtins.foldl' (a: b: lib.mkMerge [ a b ]) { } runners;
+
 
     age.secrets =
       let
