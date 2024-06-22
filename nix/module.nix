@@ -3,9 +3,11 @@ top@{ pkgs, lib, config, ... }:
 let
   inherit (pkgs.stdenv) isLinux;
   inherit (lib) types;
+  inherit (config.networking) hostName;
 
-  # TODO: fail if not set
-  host = builtins.toString config.networking.hostName;
+  host = builtins.toString
+    (lib.throwIfNot (hostName != null) "networking.hostName must be set" hostName);
+
   # The list of systems that this host can build for.
   # cf. https://stackoverflow.com/q/78649070/55246
   supportedSystems =
