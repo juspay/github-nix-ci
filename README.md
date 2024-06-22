@@ -7,7 +7,7 @@
 
 ## What it does
 
-We provide a [NixOS][nixos] and [nix-darwin] module that can be imported and utilized as easily as:
+We provide a [NixOS][nixos] and [nix-darwin] module[^wrap] that can be imported and utilized as easily as:
 
 ```nix
 {
@@ -24,9 +24,9 @@ We provide a [NixOS][nixos] and [nix-darwin] module that can be imported and uti
 }
 ```
 
-Activate your configuration spins the required GitHub runners, with appropriate labels (Nix `system` string).
+Activating this configuration spins up the required GitHub runners, with appropriate [labels][label] (hostname and Nix [system]s).
 
-In conjunction with [nixci], your CI workflow file can be as simple as follows, in order to schedule jobs on these runners (by using the same `system` string label):
+In conjunction with [nixci] (which is installed in the runners by default), your CI workflow file can be as simple as follows - for scheduling jobs on these runners (by using the same [system] string label for example):
 
 ```yaml
 jobs:
@@ -35,11 +35,9 @@ jobs:
     strategy:
       matrix:
         system: [aarch64-darwin, x86_64-darwin, x86_64-linux]
-      fail-fast: false
     steps:
       - uses: actions/checkout@v4
-      - name: nixci
-        run: nixci build --systems "github:nix-systems/${{ matrix.system }}"
+      - run: nixci build --systems "github:nix-systems/${{ matrix.system }}"
 ```
 
 ## Getting Starrted
@@ -54,3 +52,7 @@ TODO
 [nixci]: https://github.com/srid/nixci
 [nix-darwin]: https://nixos.asia/en/nix-darwin
 [nixos]: https://nixos.asia/en/nixos
+[label]: https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/using-labels-with-self-hosted-runners
+[system]: https://flake.parts/system
+
+[^wrap]: Our module wraps the upstream [NixOS](https://github.com/NixOS/nixpkgs/tree/master/pkgs/development/tools/continuous-integration/github-runner) and [nix-darwin](https://github.com/LnL7/nix-darwin/tree/master/modules/services/github-runner) modules, whilst providing a platform-independent module interface, in addition to wiring up anything else required (users, secrets) to get going easily.
