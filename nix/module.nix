@@ -109,15 +109,15 @@ in
                   readOnly = true;
                 };
 
-                output.name = lib.mkOption {
-                  type = types.str;
-                  default = "${host}-${name}-${paddedNum config.num}";
-                };
-                output.runner = lib.mkOption {
-                  type = types.raw;
-                  default = common // {
-                    inherit (config) tokenFile url;
-                  };
+                output.runners = lib.mkOption {
+                  type = types.lazyAttrsOf types.raw;
+                  default =
+                    lib.listToAttrs (for (range config.num) (i: {
+                      name = "${host}-${name}-${paddedNum i}";
+                      value = common // {
+                        inherit (config) tokenFile url;
+                      };
+                    }));
                 };
               };
             }));
@@ -185,14 +185,13 @@ in
   config = {
     # Each org gets its own set of runners. There will be at max `num` parallels
     # CI builds for this org / host combination.
-    services.github-runners = lib.listToAttrs
-      (forAttr config.services.github-nix-ci.orgRunners
-        (name: cfg:
-          lib.nameValuePair cfg.output.name cfg.output.runner)
+    services.github-runners = lib.listToAttrs (lib.flatten
+      ((for (lib.attrValues config.services.github-nix-ci.orgRunners)
+        (cfg: cfg.output.runners))
       ++
-      forAttr config.services.github-nix-ci.personalRunners (name: cfg:
-        lib.nameValuePair cfg.output.name cfg.output.runner)
-      );
+      (for (lib.attrValues config.services.github-nix-ci.personalRunners)
+        (cfg: cfg.output.runners))
+      ));
 
     age.secrets =
       let
