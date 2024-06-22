@@ -6,10 +6,24 @@
     github-nix-ci = { };
   };
   outputs = inputs: {
+    nixosModules.my-github-runners = {
+      services.github-nix-ci = {
+        age.secretsDir = ./secrets;
+        personalRunners = {
+          "srid/nixos-config".num = 1;
+          "srid/haskell-flake".num = 3;
+        };
+        orgRunners = {
+          "zed-industries".num = 10;
+        };
+      };
+    };
+
     nixosConfigurations.example = inputs.nixpkgs.lib.nixosSystem {
       modules = [
         inputs.ragenix.nixosModules.default
         inputs.github-nix-ci.nixosModules.default
+        inputs.self.nixosModules.my-github-runners
         {
           nixpkgs.hostPlatform = "x86_64-linux";
           fileSystems."/" = { device = "/dev/sda"; fsType = "ext"; };
@@ -26,19 +40,10 @@
       modules = [
         inputs.ragenix.darwinModules.default
         inputs.github-nix-ci.darwinModules.default
+        inputs.self.nixosModules.my-github-runners
         {
           nixpkgs.hostPlatform = "aarch64-darwin";
           networking.hostName = "example";
-          services.github-nix-ci = {
-            age.secretsDir = ./secrets;
-            personalRunners = {
-              "srid/nixos-config".num = 1;
-              "srid/haskell-flake".num = 3;
-            };
-            orgRunners = {
-              "zed-industries".num = 10;
-            };
-          };
           services.nix-daemon.enable = true;
         }
       ];
