@@ -110,7 +110,7 @@ in
                 };
 
                 output.runners = lib.mkOption {
-                  type = types.lazyAttrsOf types.raw;
+                  type = types.raw;
                   default =
                     lib.listToAttrs (for (range config.num) (i: {
                       name = "${host}-${name}-${paddedNum i}";
@@ -156,9 +156,8 @@ in
                     let parts = lib.splitString "/" name;
                     in if lib.length parts == 2 then builtins.elemAt parts 1 else builtins.abort "Invalid user/repo";
                 };
-
                 output.runners = lib.mkOption {
-                  type = types.lazyAttrsOf types.raw;
+                  type = types.raw;
                   default =
                     lib.listToAttrs (for (range config.num) (i: {
                       name = "${host}-${config.output.user}-${config.output.repo}-${paddedNum config.num}";
