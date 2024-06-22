@@ -78,6 +78,17 @@ in
     services.github-nix-ci = lib.mkOption {
       type = types.submodule {
         options = {
+          age.secretsDir = lib.mkOption {
+            type = types.nullOr types.path;
+            default = null;
+            description = ''
+              The directory where agenix secrets are stored
+
+              If set to non-null, the age secrets will be scaffolded
+              automatically. 
+            '';
+          };
+
           orgRunners = lib.mkOption {
             type = types.attrsOf (types.submodule ({ config, name, ... }: {
               options = {
@@ -182,6 +193,26 @@ in
       forAttr config.services.github-nix-ci.personalRunners (name: cfg:
         lib.nameValuePair cfg.output.name cfg.output.runner)
       );
+
+    age.secrets =
+      let
+        inherit (config.services.github-nix-ci.age) secretsDir;
+        ageSecretConfigFor = name:
+          let fname = "github-nix-ci/${name}.token.age";
+          in lib.nameValuePair fname {
+            inherit (config.services.github-nix-ci.output.runner) owner;
+            file = "${secretsDir}/${fname}";
+          };
+      in
+      lib.mkIf (secretsDir != null)
+        (lib.listToAttrs
+          (forAttr config.services.github-nix-ci.orgRunners
+            (name: _: ageSecretConfigFor name)
+          ++
+          forAttr config.services.github-nix-ci.personalRunners
+            (name: cfg: ageSecretConfigFor cfg.output.user)
+          ));
+
 
     # User (Linux only)
     users.users.${user} = lib.mkIf isLinux {
