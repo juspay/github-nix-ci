@@ -45,6 +45,10 @@ jobs:
 TODO
 
 
+## Examples
+
+[`./example`](./example)
+
 ## Tips
 
 ### Matrix builds
