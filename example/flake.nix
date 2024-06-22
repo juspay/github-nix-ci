@@ -6,10 +6,24 @@
     github-nix-ci = { };
   };
   outputs = inputs: {
+    nixosModules.my-github-runners = {
+      services.github-nix-ci = {
+        age.secretsDir = ./secrets;
+        personalRunners = {
+          "srid/emanote".num = 1;
+          "srid/haskell-flake".num = 3;
+        };
+        orgRunners = {
+          "zed-industries".num = 10;
+        };
+      };
+    };
+
     nixosConfigurations.example = inputs.nixpkgs.lib.nixosSystem {
       modules = [
         inputs.ragenix.nixosModules.default
         inputs.github-nix-ci.nixosModules.default
+        inputs.self.nixosModules.my-github-runners
         {
           nixpkgs.hostPlatform = "x86_64-linux";
           fileSystems."/" = { device = "/dev/sda"; fsType = "ext"; };
@@ -17,6 +31,7 @@
             systemd-boot.enable = true;
             efi.canTouchEfiVariables = true;
           };
+          services.openssh.enable = true;
           system.stateVersion = "24.05";
         }
       ];
@@ -26,12 +41,10 @@
       modules = [
         inputs.ragenix.darwinModules.default
         inputs.github-nix-ci.darwinModules.default
+        inputs.self.nixosModules.my-github-runners
         {
           nixpkgs.hostPlatform = "aarch64-darwin";
-          # TODO: Add this, and add fake ssh keys for agenix to work during nix build.
-          #github-nix-ci = {
-          #  orgRunners.juspay.num = 2;
-          #};
+          networking.hostName = "example";
           services.nix-daemon.enable = true;
         }
       ];
