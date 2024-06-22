@@ -157,15 +157,15 @@ in
                     in if lib.length parts == 2 then builtins.elemAt parts 1 else builtins.abort "Invalid user/repo";
                 };
 
-                output.name = lib.mkOption {
-                  type = types.str;
-                  default = "${host}-${config.output.user}-${config.output.repo}-${paddedNum config.num}";
-                };
                 output.runners = lib.mkOption {
-                  type = types.raw;
-                  default = common // {
-                    inherit (config) tokenFile url;
-                  };
+                  type = types.lazyAttrsOf types.raw;
+                  default =
+                    lib.listToAttrs (for (range config.num) (i: {
+                      name = "${host}-${config.output.user}-${config.output.repo}-${paddedNum config.num}";
+                      value = common // {
+                        inherit (config) tokenFile url;
+                      };
+                    }));
                 };
               };
             }));
