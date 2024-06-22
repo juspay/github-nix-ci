@@ -5,4 +5,5 @@ let
   systems = [ ];
 in
 {
+  "github-nix-ci/srid.token.age".publicKeys = users ++ systems;
 }
