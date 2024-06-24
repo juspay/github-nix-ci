@@ -58,7 +58,7 @@ Repurposing an existing machine for running [self-hosted GitHub runners][gh-runn
 
 #### New configuration
 
-If you do not already have a NixOS (for Linux) or nix-darwin (for macOS) system configuration, begin with [the templates](https://community.flake.parts/nixos-flake/templates) provided by `nixos-flake`. Alternatively, you may start from the minimal example ([`./example`](./example)) in this repo. If you use both the platforms, you can keep them in a single flake as the aforementioned example demonstrates.
+If you do not already have a NixOS (for Linux) or nix-darwin (for macOS) system configuration, begin with [the templates](https://community.flake.parts/nixos-flake/templates) provided by `nixos-flake`. Alternatively, you may start from the minimal example ([`./example`](./example/flake.nix)) in this repo. If you use both the platforms, you can keep them in a single flake as the aforementioned example demonstrates.
 
 >[!TIP]
 > If you use `nixos-flake`, activating the configuration is as simple as running `nix run .#activate` (if done locally) or [`nix run .#deploy`](https://github.com/srid/nixos-flake/pull/54) if done remotely.
@@ -68,9 +68,8 @@ If you do not already have a NixOS (for Linux) or nix-darwin (for macOS) system 
 
 If you already have a NixOS or nix-darwin system configuration, you can use `github-nix-ci` as follows:
 
-1. Switch your configuration to [using flakes](https://nixos.asia/en/configuration-as-flake) and thereon to using [flake-parts]
 1. Add this repo as a flake input
-1. Add `inputs.github-nix-ci.nixosModules.default` (if NixOS) or `inputs.github-nix-ci.darwinModules.default` (if macOS/nix-darwin) to the `imports` of your top-level flake-parts module.
+1. Add `inputs.github-nix-ci.nixosModules.default` (if NixOS) or `inputs.github-nix-ci.darwinModules.default` (if macOS/nix-darwin) to the `modules` list of your top-level system configuration.
 
 Test that everything is okay by activating your configuration.
 
