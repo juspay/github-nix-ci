@@ -12,9 +12,8 @@
       - [Add tokens to your configuration using `agenix`](#add-tokens-to-your-configuration-using-agenix)
     - [3. Configure `github-nix-ci` runners](#3-configure-github-nix-ci-runners)
     - [4. Add the workflow to your repositories](#4-add-the-workflow-to-your-repositories)
+      - [Matrix builds](#matrix-builds)
   - [Examples](#examples)
-  - [Tips](#tips)
-    - [Matrix builds](#matrix-builds)
 
 
 ## What it does
@@ -148,14 +147,9 @@ jobs:
         run: nixci --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" build --systems "${{ matrix.system }}"
 ```
 
-## Examples
+The above workflow uses [nixci] to build *all* outputs of your project flake.
 
-- [`./example`](./example)
-- [`srid/nixos-config`](https://github.com/srid/nixos-config/pull/60)
-
-## Tips
-
-### Matrix builds
+#### Matrix builds
 
 Because [nixci] supports generating GitHub's [workflow matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) configuration, you can use the following workflow YAML to schedule jobs at a fine-grained level to each runner:
 
@@ -196,6 +190,13 @@ jobs:
 ```
 
 See [srid/haskell-flake](https://github.com/srid/haskell-flake/blob/master/.github/workflows/ci.yaml) for a  real-world example.
+
+## Examples
+
+- [`./example`](./example)
+- [`srid/nixos-config`](https://github.com/srid/nixos-config/pull/60)
+
+
 
 [nixci]: https://github.com/srid/nixci
 [nix-darwin]: https://nixos.asia/en/nix-darwin
