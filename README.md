@@ -68,8 +68,11 @@ If you do not already have a NixOS (for Linux) or nix-darwin (for macOS) system 
 
 If you already have a NixOS or nix-darwin system configuration, you can use `github-nix-ci` as follows:
 
+1. Switch your configuration to [using flakes](https://nixos.asia/en/configuration-as-flake), if not already.[^non-flake]
 1. Add this repo as a flake input
 1. Add `inputs.github-nix-ci.nixosModules.default` (if NixOS) or `inputs.github-nix-ci.darwinModules.default` (if macOS/nix-darwin) to the `modules` list of your top-level system configuration.
+
+[^non-flake]: Non-flake users too can use this module by using [`fetchGit`](https://noogle.dev/f/builtins/fetchGit) or the like.
 
 Test that everything is okay by activating your configuration.
 
