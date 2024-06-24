@@ -2,6 +2,21 @@
 
 `github-nix-ci` is a simple NixOS &amp; nix-darwin module for [self-hosting GitHub runners][gh-runner] on your machines (which could be a remote server or your personal macbook), so as to provide self-hosted CI for both personal and organization-wide repositories on GitHub.
 
+- [github-nix-ci](#github-nix-ci)
+  - [What it does](#what-it-does)
+  - [Getting Started](#getting-started)
+    - [1. Create system configuration for the machine](#1-create-system-configuration-for-the-machine)
+      - [New configuration](#new-configuration)
+      - [Existing configuration](#existing-configuration)
+    - [2. Create personal access tokens](#2-create-personal-access-tokens)
+      - [Add tokens to your configuration using `agenix`](#add-tokens-to-your-configuration-using-agenix)
+    - [3. Configure `github-nix-ci` runners](#3-configure-github-nix-ci-runners)
+    - [4. Add the workflow to your repositories](#4-add-the-workflow-to-your-repositories)
+  - [Examples](#examples)
+  - [Tips](#tips)
+    - [Matrix builds](#matrix-builds)
+
+
 ## What it does
 
 We provide a [NixOS][nixos] and [nix-darwin] module[^wrap] that can be imported and utilized as easily as:
@@ -39,19 +54,13 @@ jobs:
 
 ## Getting Started
 
-Repurposing an existing machine for running [self-hosted GitHub runners][gh-runner] involves the following steps:
-
-1. Create system configuration for the machine
-1. Create [personal access tokens][pac]
-1. Add tokens to your configuration using [ragenix]
-1. Configure `github-nix-ci` runners
-1. Add the workflow
+Repurposing an existing machine for running [self-hosted GitHub runners][gh-runner] involves the following steps.
 
 ### 1. Create system configuration for the machine
 
 #### New configuration
 
-If you do not already have a NixOS (for Linux) or nix-darwin (for macOS) system configuration, begin with [the templates](https://community.flake.parts/nixos-flake/templates) provided by `nixos-flake`. Alternative, you may start from the minimal example ([`./example`](./example)) in this repo. If you use both platforms, you keep them in a single flake as this example show.
+If you do not already have a NixOS (for Linux) or nix-darwin (for macOS) system configuration, begin with [the templates](https://community.flake.parts/nixos-flake/templates) provided by `nixos-flake`. Alternatively, you may start from the minimal example ([`./example`](./example)) in this repo. If you use both the platforms, you can keep them in a single flake as the aforementioned example demonstrates.
 
 >[!TIP]
 > If you use `nixos-flake`, activating the configuration is as simple as running `nix run .#activate` (if done locally) or [`nix run .#deploy`](https://github.com/srid/nixos-flake/pull/54) if done remotely.
@@ -63,7 +72,7 @@ If you already have a NixOS or nix-darwin system configuration, you can use `git
 
 1. Switch your configuration to [using flakes](https://nixos.asia/en/configuration-as-flake) and thereon to using [flake-parts]
 1. Add this repo as a flake input
-1. Add `inputs.github-nix-ci.nixosModules.default` (if NixOS) or `inputs.github-nix-ci.darwinModules.default` (if macOS/nix-darwin) to the `imports` of your top-level module.
+1. Add `inputs.github-nix-ci.nixosModules.default` (if NixOS) or `inputs.github-nix-ci.darwinModules.default` (if macOS/nix-darwin) to the `imports` of your top-level flake-parts module.
 
 Test that everything is okay by activating your configuration.
 
@@ -105,11 +114,11 @@ services.github-nix-ci = {
 };
 ```
 
-The above configuration adds 3 sets of GitHub runner daemons. Two of them are associated with the personal repos, whereas the 3rd set is associated with the organization. The `num` property will spin-up that many runners for the associated repo or organization. Setting a `num` value that is greater than `1` enables you to run actions in parallel (upto the value of `num`).
+The above configuration adds 3 sets of GitHub runner daemons. Two of them are associated with the personal repos, whereas the 3rd set is associated with the organization (and thus *any* repository under that organization). The `num` property will spin-up that many runners for the associated repo or organization. Setting a `num` value that is greater than `1` enables you to run actions in parallel (upto the value of `num`).
 
 Activate your configuration, and visit **Settings -> Actions -> Runners** page of your repository or organization settings to confirm that the runners are ready and healthy.
 
-### 4. Add the workflow
+### 4. Add the workflow to your repositories
 
 Finally, you are equipped to add an [actions workflow file](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions) to one of the repositories to test everything out. Here's an example if you have configured both NixOS and macOS runners:
 
