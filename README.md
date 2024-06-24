@@ -36,7 +36,7 @@ We provide a [NixOS][nixos] and [nix-darwin] module[^wrap] that can be imported 
 
 Activating this configuration spins up the required GitHub runners, with appropriate [labels][label] (hostname and Nix [system]s).
 
-In conjunction with [nixci] (which is installed in the runners by default), your CI workflow file can be as simple as follows - for scheduling jobs on these runners (by using the same [system] string label for example):
+In conjunction with [nixci] (which is installed in the runners by default), your GitHub Actions workflow YAML can be as simple as follows in order to run CI on your own machines:
 
 ```yaml
 jobs:
