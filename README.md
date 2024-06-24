@@ -2,18 +2,17 @@
 
 `github-nix-ci` is a simple NixOS &amp; nix-darwin module for [self-hosting GitHub runners][gh-runner] on your machines (which could be a remote server or your personal macbook), so as to provide self-hosted CI for both personal and organization-wide repositories on GitHub.
 
-- [github-nix-ci](#github-nix-ci)
-  - [What it does](#what-it-does)
-  - [Getting Started](#getting-started)
-    - [1. Create system configuration for the machine](#1-create-system-configuration-for-the-machine)
-      - [New configuration](#new-configuration)
-      - [Existing configuration](#existing-configuration)
-    - [2. Create personal access tokens](#2-create-personal-access-tokens)
-      - [Add tokens to your configuration using `agenix`](#add-tokens-to-your-configuration-using-agenix)
-    - [3. Configure `github-nix-ci` runners](#3-configure-github-nix-ci-runners)
-    - [4. Add the workflow to your repositories](#4-add-the-workflow-to-your-repositories)
-      - [Matrix builds](#matrix-builds)
-  - [Examples](#examples)
+- [What it does](#what-it-does)
+- [Getting Started](#getting-started)
+  - [1. Create system configuration for the machine](#1-create-system-configuration-for-the-machine)
+    - [New configuration](#new-configuration)
+    - [Existing configuration](#existing-configuration)
+  - [2. Create personal access tokens](#2-create-personal-access-tokens)
+    - [Add tokens to your configuration using `agenix`](#add-tokens-to-your-configuration-using-agenix)
+  - [3. Configure `github-nix-ci` runners](#3-configure-github-nix-ci-runners)
+  - [4. Add the workflow to your repositories](#4-add-the-workflow-to-your-repositories)
+    - [Matrix builds](#matrix-builds)
+- [Examples](#examples)
 
 
 ## What it does
