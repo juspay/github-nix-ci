@@ -128,7 +128,7 @@ Activate your configuration, and visit **Settings -> Actions -> Runners** page o
 Finally, you are equipped to add an [actions workflow file](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions) to one of the repositories to test everything out. Here's an example if you have configured both NixOS and macOS runners:
 
 ```yaml
--- ./.github/workflows/nix.yaml
+# ./.github/workflows/nix.yaml
 name: "CI"
 on:
   push:
@@ -155,6 +155,7 @@ The above workflow uses [nixci] to build *all* outputs of your project flake.
 Because [nixci] supports generating GitHub's [workflow matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) configuration, you can use the following workflow YAML to schedule jobs at a fine-grained level to each runner:
 
 ```yaml
+# ./.github/workflows/nix.yaml
 name: "CI"
 on:
   push:
