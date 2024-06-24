@@ -120,6 +120,11 @@ Activate your configuration, and visit **Settings -> Actions -> Runners** page o
 
 ### 4. Add the workflow to your repositories
 
+>[!WARNING]
+> **A note on security** of self-hosted GitHub runners: GitHub [recommends](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners#self-hosted-runner-security) using self-hosted runners only with *private* repositories, as forks *"can potentially run dangerous code on [the] self-hosted runner machine by creating a pull request that executes the code in a workflow"*. 
+> 
+> You can mitigate this risk by going to the **Fork pull request workflows from outside collaborators** setting (under **Settings -> Actions -> General**) and enabling "Require approval for all outside collaborators".
+
 Finally, you are equipped to add an [actions workflow file](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions) to one of the repositories to test everything out. Here's an example if you have configured both NixOS and macOS runners:
 
 ```yaml
