@@ -152,7 +152,45 @@ jobs:
 
 ### Matrix builds
 
-TODO
+Because [nixci] supports generating GitHub's [workflow matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) configuration, you can use the following workflow YAML to schedule jobs at a fine-grained level to each runner:
+
+```yaml
+name: "CI"
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+jobs:
+  
+  configure:
+    runs-on: x86_64-linux
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+     - uses: actions/checkout@v4
+     - id: set-matrix
+       run: echo "matrix=$(nixci gh-matrix --systems=x86_64-linux,aarch64-darwin | jq -c .)" >> $GITHUB_OUTPUT
+  
+  nix:
+    runs-on: ${{ matrix.system }}
+    permissions:
+      contents: read
+    needs: configure
+    strategy:
+      matrix: ${{ fromJson(needs.configure.outputs.matrix) }}
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          nixci \
+            --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" \
+            build \
+            --systems "${{ matrix.system }}" \
+            .#default.${{ matrix.subflake}}
+```
+
+See [srid/haskell-flake](https://github.com/srid/haskell-flake/blob/master/.github/workflows/ci.yaml) for a  real-world example.
 
 [nixci]: https://github.com/srid/nixci
 [nix-darwin]: https://nixos.asia/en/nix-darwin
