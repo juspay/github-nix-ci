@@ -133,7 +133,7 @@ name: "CI"
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
 jobs:
   nix:
@@ -159,7 +159,7 @@ name: "CI"
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
 jobs:
   
