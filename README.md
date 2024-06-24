@@ -2,9 +2,6 @@
 
 `github-nix-ci` is a simple NixOS &amp; nix-darwin module for [self-hosting GitHub runners][gh-runner] on your machines (which could be a remote server or your personal macbook), so as to provide self-hosted CI for both personal and organization-wide repositories on GitHub.
 
->[!WARNING]
-> Work in progress. Do not use *yet*.
-
 ## What it does
 
 We provide a [NixOS][nixos] and [nix-darwin] module[^wrap] that can be imported and utilized as easily as:
