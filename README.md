@@ -93,7 +93,10 @@ For our runners to be able to authorize against GitHub, we need to create **fine
 #### Add tokens to your configuration using `agenix`
 
 >[!TIP]
-> Follow [the agenix tutorial](https://github.com/ryantm/agenix?tab=readme-ov-file#tutorial) for details. [This PR](https://github.com/srid/nixos-config/pull/57) in `srid/nixos-config` can also be used as reference.
+> Follow [the agenix tutorial](https://github.com/ryantm/agenix?tab=readme-ov-file#tutorial) for details. [This PR](https://github.com/srid/nixos-config/pull/57) in `srid/nixos-config` can also be used as reference. 
+
+> [!NOTE]
+> This module does not *mandate* the use of `agenix`. If you use something else other than `agenix` for secrets management, set the `tokenFile` option manually.
 
 1. Create a `./secrets/secrets.nix` containing the SSH keys of yourself and the machines, as well as the list of token `.age` files (see next point). See [`./example/secrets/secrets.nix`](https://github.com/juspay/github-nix-ci/blob/main/example/secrets/secrets.nix) for reference.
 2. Create a `.age` file for each PAC secret you created in the previous section
@@ -105,7 +108,7 @@ Now that you have set everything up, it is time to configure the runners themsel
 
 ```nix
 services.github-nix-ci = {
-  age.secretsDir = ./secrets;
+  age.secretsDir = ./secrets; # Only if you use agenix
   personalRunners = {
     "srid/emanote".num = 1;
     "srid/haskell-flake".num = 3;
