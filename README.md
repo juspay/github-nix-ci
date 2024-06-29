@@ -7,13 +7,9 @@
 - [What it does](#what-it-does)
 - [Getting Started](#getting-started)
   - [1. Create system configuration for the machine](#1-create-system-configuration-for-the-machine)
-    - [New configuration](#new-configuration)
-    - [Existing configuration](#existing-configuration)
   - [2. Create personal access tokens](#2-create-personal-access-tokens)
-    - [Add tokens to your configuration using `agenix`](#add-tokens-to-your-configuration-using-agenix)
   - [3. Configure `github-nix-ci` runners](#3-configure-github-nix-ci-runners)
   - [4. Add the workflow to your repositories](#4-add-the-workflow-to-your-repositories)
-    - [Matrix builds](#matrix-builds)
 - [Examples](#examples)
 
 
@@ -38,7 +34,7 @@ We provide a [NixOS][nixos] and [nix-darwin] module[^wrap] that can be imported 
 
 Activating this configuration spins up the required GitHub runners, with appropriate [labels][label] (hostname and Nix [system]s).
 
-In conjunction with [nixci] (which is installed in the runners by default), your GitHub Actions workflow YAML can be as simple as follows in order to run CI on your own machines:
+In conjunction with [nixci] (which is installed in the runners by default), your GitHub Actions workflow YAML can be as simple as follows in order to run CI, on your own machines, for your Nix flakes based projects:
 
 ```yaml
 jobs:
