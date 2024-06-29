@@ -10,6 +10,8 @@
   - [2. Create personal access tokens](#2-create-personal-access-tokens)
   - [3. Configure `github-nix-ci` runners](#3-configure-github-nix-ci-runners)
   - [4. Add the workflow to your repositories](#4-add-the-workflow-to-your-repositories)
+- [Production](#production)
+  - [Common issues](#common-issues)
 - [Examples](#examples)
 
 
@@ -193,6 +195,25 @@ jobs:
 ```
 
 See [srid/haskell-flake](https://github.com/srid/haskell-flake/blob/master/.github/workflows/ci.yaml) for a  real-world example.
+
+## Production
+
+### Common issues
+
+#### `Forbidden Runner version ... is deprecated and cannot receive messages.`
+
+Your runner may suddenly crash with an error like this:
+
+```
+Jun 27 22:39:54 dosa Runner.Listener[424134]: An error occured: Error: Forbidden Runner version v2.316.1 is deprecated and cannot receive messages.
+```
+
+To resolve this, you need to update your github runner package by updating the `nixpkgs` flake input and then re-deploy. See https://github.com/actions/runner/issues/3332#issuecomment-2187929070
+
+>[!TIP]
+>
+> The `github-runner` package is auto-updated in nixpkgs by the r-ryantm bot ([example](https://github.com/NixOS/nixpkgs/pull/316806)), and then automatically gets backported ([example](https://github.com/NixOS/nixpkgs/pull/316888)) to stable NixOS releases.
+
 
 ## Examples
 
