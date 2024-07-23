@@ -50,6 +50,8 @@ let
       # For nix builds
       nix
       nixci
+      # For those that use Cachix
+      cachix
 
       # Tools already available in standard GitHub Runners; so we provide
       # them here:
