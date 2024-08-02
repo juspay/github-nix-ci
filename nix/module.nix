@@ -65,6 +65,7 @@ let
 
   # Runner configuration
   common = {
+    imports = [ config.services.github-nix-ci.runnerModule ];
     inherit extraLabels extraPackages;
     enable = true;
     replace = true;
@@ -89,6 +90,14 @@ in
               If set to non-null, the age secrets will be scaffolded
               automatically. 
             '';
+          };
+
+          runnerModule = lib.mkOption {
+            description = ''
+              Extra github-runner configuration to import
+            '';
+            type = types.deferredModule;
+            default = { };
           };
 
           orgRunners = lib.mkOption {
