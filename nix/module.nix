@@ -70,7 +70,7 @@ let
     replace = true;
     ephemeral = true;
     noDefaultLabels = true;
-    extraPackages = extraPackages ++ config.services.github-nix-ci.settings.extraPackages;
+    extraPackages = extraPackages ++ config.services.github-nix-ci.runnerSettings.extraPackages;
   } // lib.optionalAttrs isLinux { inherit user group; };
   user = "github-runner";
   group = "github-runner";
@@ -92,7 +92,7 @@ in
             '';
           };
 
-          settings = {
+          runnerSettings = {
             extraPackages = lib.mkOption {
               type = types.listOf types.package;
               default = [ ];
