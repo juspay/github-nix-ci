@@ -66,11 +66,12 @@ let
   # Runner configuration
   common = {
     imports = [ config.services.github-nix-ci.runnerModule ];
-    inherit extraLabels extraPackages;
+    inherit extraLabels;
     enable = true;
     replace = true;
     ephemeral = true;
     noDefaultLabels = true;
+    extraPackages = extraPackages ++ config.services.github-nix-ci.settings.extraPackages;
   } // lib.optionalAttrs isLinux { inherit user group; };
   user = "github-runner";
   group = "github-runner";
@@ -92,12 +93,14 @@ in
             '';
           };
 
-          runnerModule = lib.mkOption {
-            description = ''
-              Extra github-runner configuration to import
-            '';
-            type = types.deferredModule;
-            default = { };
+          settings = {
+            extraPackages = lib.mkOption {
+              type = types.listOf types.package;
+              default = [ ];
+              description = ''
+                Extra packages to be installed on all runners
+              '';
+            };
           };
 
           orgRunners = lib.mkOption {
