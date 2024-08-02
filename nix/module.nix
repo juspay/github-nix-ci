@@ -65,7 +65,6 @@ let
 
   # Runner configuration
   common = {
-    imports = [ config.services.github-nix-ci.runnerModule ];
     inherit extraLabels;
     enable = true;
     replace = true;
