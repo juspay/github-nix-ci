@@ -2,18 +2,20 @@
   outputs = _: {
     nixosModules.default = ./nix/module.nix;
     darwinModules.default = ./nix/module.nix;
-    nixci.default =
+
+    # https://omnix.page/om/ci.html
+    om.ci.default =
       let
         overrideInputs.github-nix-ci = ./.;
       in
       {
         example = {
           inherit overrideInputs;
-          dir = ./example;
+          dir = "example";
         };
         dev = {
           inherit overrideInputs;
-          dir = ./dev;
+          dir = "dev";
         };
       };
   };
