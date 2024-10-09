@@ -12,7 +12,13 @@ let
   # cf. https://stackoverflow.com/q/78649070/55246
   supportedSystems =
     let
-      extra-systems = config.nix.settings.extra-platforms or [ ];
+      extra-systems =
+        # on Darwin, nix.conf's extra-platforms is a string, as opposed to a list (as on NixOS)
+        if isDarwin
+        then if lib.hasAttr "extra-platforms" config.nix.settings
+        then lib.strings.splitString " " config.nix.settings.extra-platforms
+        else [ ]
+        else config.nix.settings.extra-platforms or [ ];
       host-system = config.nixpkgs.hostPlatform.system;
     in
     lib.unique ([ host-system ] ++ extra-systems);
