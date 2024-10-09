@@ -13,9 +13,12 @@ let
   supportedSystems =
     let
       extra-systems =
-        if lib.hasAttr "extra-platforms" config.nix.settings
+        # on Darwin, nix.conf's extra-platforms is a string, as opposed to a list (as on NixOS)
+        if isDarwin
+        then if lib.hasAttr "extra-platforms" config.nix.settings
         then lib.strings.splitString " " config.nix.settings.extra-platforms
-        else [ ];
+        else [ ]
+        else config.nix.settings.extra-platforms or [ ];
       host-system = config.nixpkgs.hostPlatform.system;
     in
     lib.unique ([ host-system ] ++ extra-systems);
