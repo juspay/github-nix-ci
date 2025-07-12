@@ -36,9 +36,10 @@ let
   # The following labels are use:
   # - Hostname of the runner
   # - Nix systems it can build for.
+  # - Custom labels from runnerSettings.labels
   #
   # In workflow file, we expect the user to use the Nix system as label usually.
-  extraLabels = [ host ] ++ supportedSystems;
+  extraLabels = [ host ] ++ supportedSystems ++ config.services.github-nix-ci.runnerSettings.labels;
 
   # Packages that will be made available to all runners.
   extraPackages =
@@ -101,6 +102,13 @@ in
               default = [ ];
               description = ''
                 Extra packages to be installed on all runners
+              '';
+            };
+            labels = lib.mkOption {
+              type = types.listOf types.str;
+              default = [ ];
+              description = ''
+                Extra labels to be added to all runners
               '';
             };
           };
