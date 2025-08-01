@@ -87,6 +87,7 @@ For our runners to be able to authorize against GitHub, we need to create **fine
     - Setup the necessary permissions
         - If the token is for a personal account, under **Permissions -> Repository permissions**, set *Administration* to "Read and write"
         - If the token is for an organization, under **Permissions -> Organization permissions**, set _Self-hosted runners_ to "Read and write"
+            - Don't forget to "Allow public repositories" under "Actions -> Runner groups -> Default" ([ref](https://stackoverflow.com/a/77415170)).
 
 #### Add tokens to your configuration using `agenix`
 
