@@ -15,6 +15,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          om ci \
-            --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" \
-            run --systems "${{ matrix.system }}"
+          om ci run --systems "${{ matrix.system }}"
